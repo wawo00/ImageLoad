@@ -5,7 +5,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ImageView;
 
+import com.openup.app3.design.DoubleCache;
 import com.openup.app3.design.ImageLoader;
+import com.openup.app3.design.MyDiskCache;
+import com.openup.app3.design.MyLruCache;
 
 public class ImageLoaderDemo extends AppCompatActivity {
     /**
@@ -25,7 +28,7 @@ public class ImageLoaderDemo extends AppCompatActivity {
 
     private void useImageLoader() {
         ImageLoader imageLoader=new ImageLoader();
-        imageLoader.setUseDiskCahe(true);
+        imageLoader.setImageCache(new MyDiskCache());
         imageLoader.displayImage(showPic,imgUrl[0]);
     }
 

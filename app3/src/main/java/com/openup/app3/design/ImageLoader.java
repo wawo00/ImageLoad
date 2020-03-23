@@ -31,8 +31,7 @@ public class ImageLoader {
     private static String TAG = "Roy_imageLoader";
     private Context mContext;
 
-    ImageCache imgCache = new ImageCache();
-    DiskCache mDiskCache=new DiskCache();
+    private ImageCache mImageCache = new DoubleCache();
     private boolean useDiskCahe;
     // 需要显示的view
     private ImageView mImageView;
@@ -45,26 +44,14 @@ public class ImageLoader {
             }
         }
     };
-
-    public boolean isUseDiskCahe() {
-        return useDiskCahe;
-    }
-
-    public void setUseDiskCahe(boolean useDiskCahe) {
-        this.useDiskCahe = useDiskCahe;
-    }
     public void displayImage(final ImageView view, final String url) {
-        Bitmap bitmap = isUseDiskCahe() ? mDiskCache.getImage(url) : imgCache.getBitmap(url);
+        Bitmap bitmap = mImageCache.get(url);
         if (bitmap == null) {
             mExecutorService.submit(new Runnable() {
                 @Override
                 public void run() {
                     Bitmap tempImage = downLoadBitmap(url);
-                    if (isUseDiskCahe()) {
-                        mDiskCache.putImage(url, tempImage);
-                    } else {
-                        imgCache.putBitmap(url, tempImage);
-                    }
+                    mImageCache.put(url, tempImage);
                     updateImage(view, tempImage);
                 }
             });
@@ -83,6 +70,7 @@ public class ImageLoader {
     }
 
     public Bitmap downLoadBitmap(String imageUrl) {
+        Log.i(TAG, "downLoadBitmap: running "+imageUrl);
         URL url = null;
         HttpURLConnection httpURLConnection = null;
         Bitmap bitmap = null;
@@ -111,5 +99,10 @@ public class ImageLoader {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void setImageCache(ImageCache imgCache) {
+        mImageCache = imgCache;
+
     }
 }
