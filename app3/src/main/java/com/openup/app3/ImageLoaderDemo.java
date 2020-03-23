@@ -24,7 +24,7 @@ public class ImageLoaderDemo extends AppCompatActivity {
     }
 
     private void useImageLoader() {
-        ImageLoader imageLoader=new ImageLoader(this);
+        ImageLoader imageLoader=new ImageLoader();
         imageLoader.setUseDiskCahe(true);
         imageLoader.displayImage(showPic,imgUrl[0]);
     }

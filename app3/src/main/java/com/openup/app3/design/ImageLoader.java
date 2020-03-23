@@ -32,7 +32,7 @@ public class ImageLoader {
     private Context mContext;
 
     ImageCache imgCache = new ImageCache();
-    DiskCache mDiskCache;
+    DiskCache mDiskCache=new DiskCache();
     private boolean useDiskCahe;
     // 需要显示的view
     private ImageView mImageView;
@@ -46,7 +46,6 @@ public class ImageLoader {
         }
     };
 
-
     public boolean isUseDiskCahe() {
         return useDiskCahe;
     }
@@ -54,24 +53,7 @@ public class ImageLoader {
     public void setUseDiskCahe(boolean useDiskCahe) {
         this.useDiskCahe = useDiskCahe;
     }
-
-
     public void displayImage(final ImageView view, final String url) {
-//        view.setTag(url);
-//        mExecutorService.submit(new Runnable() {
-//            @Override
-//            public void run() {
-//                Bitmap bitmap = downLoadBitmap(url);
-//                if (bitmap == null) {
-//                    Log.e(TAG, "has error in download ");
-//                }
-//                if (view.getTag().equals(url)) {
-//                    updateImage(view, bitmap);
-//                }
-//                imgCache.putBitmap(url, bitmap);
-//            }
-//        });
-
         Bitmap bitmap = isUseDiskCahe() ? mDiskCache.getImage(url) : imgCache.getBitmap(url);
         if (bitmap == null) {
             mExecutorService.submit(new Runnable() {
