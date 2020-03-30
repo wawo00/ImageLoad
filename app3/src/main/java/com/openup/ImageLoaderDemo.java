@@ -53,16 +53,16 @@ public class ImageLoaderDemo extends AppCompatActivity implements LoadListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_loader_demo);
-        showPic1=findViewById(R.id.showPic1);
-        showPic2=findViewById(R.id.showPic2);
-        showPic3=findViewById(R.id.showPic3);
+//        showPic1=findViewById(R.id.showPic1);
+//        showPic2=findViewById(R.id.showPic2);
+//        showPic3=findViewById(R.id.showPic3);
 //        showPic=findViewById(R.id.showPic);
         // 获得extendsd卡读取权限
         getAccess();
         mListView=findViewById(R.id.listview);
         useImageLoader();
-//        mAdapter=new MyAdapter(this, Arrays.asList(imgUrl));
-//        mListView.setAdapter(mAdapter);
+        mAdapter=new MyAdapter(this, Arrays.asList(imgUrl));
+        mListView.setAdapter(mAdapter);
     }
 
     private void getAccess() {
@@ -86,9 +86,9 @@ public class ImageLoaderDemo extends AppCompatActivity implements LoadListener {
 //        LogHelper.logi("config is "+config);
         // 初始化
         ImageLoader.getInstance().init(config);
-        ImageLoader.getInstance().displayImage(showPic1,imgUrl[0],this);
-        ImageLoader.getInstance().displayImage(showPic2,imgUrl[1],this);
-        ImageLoader.getInstance().displayImage(showPic3,imgUrl[2],this);
+//        ImageLoader.getInstance().displayImage(showPic1,imgUrl[0],this);
+//        ImageLoader.getInstance().displayImage(showPic2,imgUrl[1],this);
+//        ImageLoader.getInstance().displayImage(showPic3,imgUrl[2],this);
 
 
         //        ImageLoader imageLoader=new ImageLoader();
