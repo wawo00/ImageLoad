@@ -121,10 +121,6 @@ public class BitmapRequest implements Comparable<BitmapRequest> {
         return isCancelRequest;
     }
 
-    public void setCancelRequest(boolean cancelRequest) {
-        isCancelRequest = cancelRequest;
-    }
-
     @Override
     public int hashCode() {
         final int prime = 31;

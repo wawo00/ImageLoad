@@ -6,14 +6,29 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="com.openup.ImageLoaderDemo">
+
     <ImageView
-        android:id="@+id/showPic"
+        android:id="@+id/showPic1"
+        android:src="@mipmap/ic_launcher"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"></ImageView>
-<!--    <ListView-->
-<!--        android:id="@+id/listview"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent"-->
-<!--        ></ListView>-->
+
+    <ImageView
+        android:id="@+id/showPic2"
+        android:src="@mipmap/ic_launcher"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"></ImageView>
+
+    <ImageView
+        android:id="@+id/showPic3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"></ImageView>
+
+
+    <ListView
+        android:id="@+id/listview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"></ListView>
 
 </LinearLayout>

@@ -37,13 +37,14 @@ public class ImageLoaderConfig {
         return mDisplayConfig;
     }
 
-    public int getThreadCount() {
-        return threadCount;
-    }
 
     public ImageLoaderConfig setThreadCount(int count) {
         this.threadCount = Math.max(1, count);
         return this;
+    }
+
+    public int getThreadCount() {
+        return threadCount;
     }
 
     public ImageLoaderConfig setImageCache(ImageCache imageCache) {

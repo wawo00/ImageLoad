@@ -23,51 +23,85 @@ import com.openup.imageloader.utils.LogHelper;
 public abstract class AbsLoader implements Loader {
     private ImageLoaderConfig mConfig = ImageLoader.getInstance().getConfig();
     private BitmapRequest mBitmapRequest;
-    private ImageView mImageView;
+    /**
+     * 图片缓存
+     */
+    private static ImageCache mCache = ImageLoader.getInstance().getConfig().getImageCache();
+
+//    @Override
+//    public void loadBitmap(BitmapRequest bitmapRequest) {
+//        Bitmap resultBitmap=mCache.get(bitmapRequest.getRequestUrl());
+//        StringBuffer stringBuffer=new StringBuffer();
+//        if (resultBitmap==null){
+//            stringBuffer.append("no cahce");
+//        }else{
+//            stringBuffer.append("has cahce");
+//        }
+//        stringBuffer.append("--uri = " + bitmapRequest.getRequestUrl());
+//        LogHelper.logi(stringBuffer.toString());
+//
+//        if (resultBitmap == null) {
+//            showLoadingImg(bitmapRequest);
+//            resultBitmap = onLoadImage(bitmapRequest);
+//            cacheBitmap(resultBitmap, bitmapRequest);
+//        } else {
+//            bitmapRequest.justCacheInMem = true;
+//        }
+//
+//        deliveryToUIThread(bitmapRequest, resultBitmap);
+//    }
 
 
     @Override
     public void loadBitmap(BitmapRequest bitmapRequest) {
         mBitmapRequest = bitmapRequest;
-        mImageView = bitmapRequest.getImageView();
+       ImageView mImageView = bitmapRequest.getImageView();
         Bitmap bitmap = mConfig.getImageCache().get(bitmapRequest.getRequestUrl());
-
-        LogHelper.logi("### 是否有缓存 : " + bitmapRequest + ", uri = " + bitmapRequest.getRequestUrl());
+        StringBuffer stringBuffer = new StringBuffer();
+        if (bitmap == null) {
+            stringBuffer.append("no cahce");
+        } else {
+            stringBuffer.append("has cahce");
+        }
+        stringBuffer.append("--uri = " + bitmapRequest.getRequestUrl());
+        LogHelper.logi(stringBuffer.toString());
         if (bitmap == null) {
             // 进行网络的下载
-            showLoadingImg(mConfig);
+//            showLoadingImg(mConfig);
             bitmap = onLoadImage(bitmapRequest);
             cacheBitmap(bitmap, bitmapRequest);
         } else {
             bitmapRequest.justCacheInMem = true;
         }
-
+        LogHelper.logi(" loadbitmap result is " + bitmap.getByteCount());
         // 显示到UI上
-        deliveryToUIThread(bitmapRequest.getImageView(), bitmap);
-
+        deliveryToUIThread(bitmapRequest, bitmap);
     }
 
-    private void deliveryToUIThread(final ImageView imageView, final Bitmap bitmap) {
+
+    private void deliveryToUIThread(final BitmapRequest bitmapRequest, final Bitmap bitmap) {
+        final ImageView imageView = bitmapRequest.getImageView();
         if (imageView == null) {
             return;
         }
         imageView.post(new Runnable() {
             @Override
             public void run() {
-                updateImage(bitmap);
+                updateImage(bitmapRequest, bitmap);
             }
         });
 
     }
 
-    private void updateImage(Bitmap bitmap) {
+    private void updateImage(BitmapRequest bitmapRequest, Bitmap bitmap) {
+        final ImageView mImageView = bitmapRequest.getImageView();
         if (bitmap == null && hasLoadFailImg(mConfig.getDisplayConfig())) {
             mImageView.setImageResource(mConfig.getDisplayConfig().failedResId);
         }
-        if (mBitmapRequest.getLoadListener() != null) {
-            mBitmapRequest.getLoadListener().onComplete(mBitmapRequest.getRequestUrl(), bitmap);
+        if (bitmapRequest.getLoadListener() != null) {
+            bitmapRequest.getLoadListener().onComplete(bitmapRequest.getRequestUrl(), bitmap);
         }
-        if (mBitmapRequest != null && mImageView.getTag().equals(mBitmapRequest.getRequestUrl())) {
+        if (bitmapRequest != null && mImageView.getTag().equals(bitmapRequest.getRequestUrl())) {
             mImageView.setImageBitmap(bitmap);
         }
     }
@@ -81,13 +115,13 @@ public abstract class AbsLoader implements Loader {
         }
     }
 
-    public void showLoadingImg(final ImageLoaderConfig config) {
-        final ImageView view = mBitmapRequest.getImageView();
-        if (hasLoadingImg(config.getDisplayConfig()) && mBitmapRequest.isImageViewTagValid()) {
+    public void showLoadingImg(final BitmapRequest bitmapRequest) {
+        final ImageView view = bitmapRequest.getImageView();
+        if (hasLoadingImg(mConfig.getDisplayConfig()) && bitmapRequest.isImageViewTagValid()) {
             view.post(new Runnable() {
                 @Override
                 public void run() {
-                    view.setImageResource(config.getDisplayConfig().loadingResId);
+                    view.setImageResource(mConfig.getDisplayConfig().loadingResId);
                 }
             });
         }

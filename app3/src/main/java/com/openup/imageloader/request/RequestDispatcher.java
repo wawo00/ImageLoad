@@ -21,7 +21,8 @@ public class RequestDispatcher extends Thread {
     private BlockingQueue<BitmapRequest> mQueue;
 
 
-    public RequestDispatcher(BlockingQueue<BitmapRequest> requestDeque) {
+    public RequestDispatcher(BlockingQueue<BitmapRequest> requestDeque,String name) {
+        super(name);
         mQueue = requestDeque;
     }
 
@@ -30,6 +31,7 @@ public class RequestDispatcher extends Thread {
         try {
             while (!isInterrupted()) {
                 BitmapRequest request = mQueue.take();
+                LogHelper.logi("request in RequestDispatcher is"+request.getRequestUrl()+" id is"+request.getSerialNum()+" thread is "+this.getName());
                 if (request.isCancelRequest()) {
                     continue;
                 }

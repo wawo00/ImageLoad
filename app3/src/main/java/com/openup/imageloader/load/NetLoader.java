@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 
 import com.openup.imageloader.request.BitmapRequest;
 import com.openup.imageloader.utils.IOutils;
+import com.openup.imageloader.utils.LogHelper;
 
 import java.io.BufferedInputStream;
 import java.io.Closeable;

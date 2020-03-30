@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ImageLoadRequestQueue {
 
-    private BlockingQueue<BitmapRequest> mRequestQueue = new PriorityBlockingQueue<BitmapRequest>();
+    private BlockingQueue<BitmapRequest> mRequestQueue = new PriorityBlockingQueue<BitmapRequest>(20);
 
     // 请求id的生成器
     private AtomicInteger mSerialNumGenerator = new AtomicInteger(0);
@@ -31,9 +31,12 @@ public class ImageLoadRequestQueue {
     // dispath数组
     private RequestDispatcher[] mDispatchers = null;
 
-
     public void clear() {
         mRequestQueue.clear();
+    }
+
+    public ImageLoadRequestQueue(int processNum) {
+        this.dispathNum = Math.min(processNum, dispathNum);
     }
 
     /**
@@ -46,6 +49,7 @@ public class ImageLoadRequestQueue {
             int requestId = generateSerialNum();
             request.setSerialNum(requestId);
             mRequestQueue.add(request);
+            LogHelper.logi("mRequestQueue size is "+mRequestQueue.size());
         } else {
             LogHelper.loge("request" + request.getSerialNum() + " has been added in this queue");
         }
@@ -55,7 +59,7 @@ public class ImageLoadRequestQueue {
         mDispatchers = new RequestDispatcher[dispathNum];
         for (int i = 0; i < dispathNum; i++) {
             LogHelper.logi("启动线程" + i);
-            mDispatchers[i] = new RequestDispatcher(mRequestQueue);
+            mDispatchers[i] = new RequestDispatcher(mRequestQueue,"thread ="+i);
             mDispatchers[i].start();
         }
     }

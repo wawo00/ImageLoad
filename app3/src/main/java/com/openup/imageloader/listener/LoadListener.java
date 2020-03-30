@@ -13,7 +13,5 @@ import android.widget.ImageView;
  */
 
 public interface LoadListener {
-    public void onStart(String url, ImageView imageView);
-
     public void onComplete(String url, Bitmap bitmap);
 }

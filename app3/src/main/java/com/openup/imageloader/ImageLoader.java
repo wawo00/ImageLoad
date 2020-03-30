@@ -64,6 +64,8 @@ public class ImageLoader {
 
     public void init(ImageLoaderConfig config) {
         checkConfig(config);
+        queue = new ImageLoadRequestQueue(mConfig.getThreadCount());
+        queue.start();
     }
 
     private void checkConfig(ImageLoaderConfig config) {
@@ -75,11 +77,9 @@ public class ImageLoader {
     }
 
 
-    public void displayImage(final ImageView view, final String url) {
-        BitmapRequest bitmapRequest = new BitmapRequest(view, url, mConfig.getDisplayConfig(), null);
-        queue = new ImageLoadRequestQueue();
+    public void displayImage(final ImageView view, final String url, LoadListener loadListener) {
+        BitmapRequest bitmapRequest = new BitmapRequest(view, url, mConfig.getDisplayConfig(), loadListener == null ? null : loadListener);
         queue.addRequest(bitmapRequest);
-        queue.start();
     }
 
 

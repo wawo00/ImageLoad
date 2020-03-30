@@ -9,7 +9,7 @@ package com.openup.app3.reflect;
  * @CreateDate: 2020/3/25 10:42
  */
 
-public class Person {
+public class Person implements Comparable<Person> {
   String name;
   private int age;
 
@@ -40,6 +40,12 @@ public class Person {
   private void privateMethod(){
     System.out.println("this is private method");
 
+  }
+
+
+  @Override
+  public int compareTo(Person o) {
+    return this.age-o.age;
   }
 }
 
