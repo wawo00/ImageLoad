@@ -2,9 +2,13 @@
 apply from: "config.gradle"
 buildscript {
     repositories {
+//        maven {
+//            url 'https://com.yumimobi.ads.thirdparty'
+//            name 'Chartboost'
+//        }
         google()
         jcenter()
-        
+
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.5.2'
@@ -16,9 +20,14 @@ buildscript {
 
 allprojects {
     repositories {
+//        maven {
+//            url 'https://com.yumimobi.ads.thirdparty'
+//            name 'Chartboost'
+//        }
         google()
         jcenter()
-        
+
+
     }
 }
 

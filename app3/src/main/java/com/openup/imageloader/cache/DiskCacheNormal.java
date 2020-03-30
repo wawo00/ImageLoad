@@ -1,4 +1,4 @@
-package com.openup.app3.design;
+package com.openup.imageloader.cache;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -7,7 +7,6 @@ import android.util.Log;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 
 /**
@@ -19,15 +18,28 @@ import java.io.IOException;
  * @CreateDate: 2020/3/23 10:57
  */
 
-public class DiskCache {
+public class DiskCacheNormal {
 
-    private String dirPath="sdcard/royImageLoader/";
+    private String dirPath = "";
+    private Context context;
 
-    public DiskCache( ) {
-        init();
+    public DiskCacheNormal(Context context, String dirPath) {
+        this.dirPath = dirPath;
+        this.context = context;
+        init(context, dirPath);
     }
 
-    private void init() {
+    /**
+     * 默认使用的是内部缓存cache路径
+     *
+     * @param context
+     */
+    public DiskCacheNormal(Context context) {
+        String path = context.getCacheDir().getAbsolutePath();
+        init(context, path);
+    }
+
+    private void init(Context context, String dirPath) {
         File cacheDir = new File(dirPath);
         if (!cacheDir.exists()) {
             cacheDir.mkdirs();
@@ -36,18 +48,16 @@ public class DiskCache {
 
     public void putImage(String url, Bitmap bitmap) {
         String filePath = getCachePath(url);
-        Log.i("roy", "putImage: " + filePath);
         File imgFile = new File(filePath);
         if (imgFile.exists()) {
             return;
         }
         FileOutputStream fileOutputStream = null;
         try {
-            imgFile.createNewFile();
-            fileOutputStream = new FileOutputStream(imgFile);
+            fileOutputStream = new FileOutputStream(filePath);
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream);
         } catch (Exception e) {
-            Log.e("Roy", "has error in putimg in fileCache " + e.getMessage());
+            Log.e("Roy", "has error in putimg in fileCache"+e.getMessage());
         } finally {
             try {
                 fileOutputStream.close();
@@ -62,12 +72,13 @@ public class DiskCache {
         if (cacheImg == null) {
             return null;
         }
-        Bitmap bitmap = BitmapFactory.decodeFile(dirPath + url);
+        Bitmap bitmap = BitmapFactory.decodeFile(getCachePath(url));
         return bitmap;
     }
 
-    private String getCachePath(String url) {
-        return dirPath + url.toLowerCase().replace("/", "");
+
+    private String getCachePath(String origanlName) {
+        return dirPath + File.separator + origanlName.toLowerCase().replace("/", "");
     }
 
 }

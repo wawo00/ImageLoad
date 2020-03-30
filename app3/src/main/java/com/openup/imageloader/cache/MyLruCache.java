@@ -1,4 +1,4 @@
-package com.openup.app3.design;
+package com.openup.imageloader.cache;
 
 import android.graphics.Bitmap;
 import android.util.LruCache;
