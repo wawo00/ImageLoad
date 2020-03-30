@@ -1,33 +1,14 @@
 package com.openup.imageloader;
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
-import android.util.Log;
 import android.widget.ImageView;
 
-import com.openup.app3.R;
 import com.openup.imageloader.cache.ImageCache;
-import com.openup.imageloader.config.DisplayConfig;
 import com.openup.imageloader.config.ImageLoaderConfig;
 import com.openup.imageloader.listener.LoadListener;
-import com.openup.imageloader.load.LoadManager;
 import com.openup.imageloader.request.BitmapRequest;
+import com.openup.imageloader.request.ILoadRequest;
+import com.openup.imageloader.request.ImageLoadRequestPool;
 import com.openup.imageloader.request.ImageLoadRequestQueue;
-import com.openup.imageloader.strategy.LoadStrategy;
-import com.openup.imageloader.strategy.SerialPolicy;
-
-import java.io.BufferedInputStream;
-import java.io.Closeable;
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * @ProjectName: TestApplication
@@ -45,7 +26,7 @@ public class ImageLoader {
     // 需要显示的view
     private static ImageView mImageView;
     private ImageLoaderConfig mConfig;
-    ImageLoadRequestQueue queue;
+    ILoadRequest loadRequest;
 
     public ImageLoaderConfig getConfig() {
         return mConfig;
@@ -64,8 +45,9 @@ public class ImageLoader {
 
     public void init(ImageLoaderConfig config) {
         checkConfig(config);
-        queue = new ImageLoadRequestQueue(mConfig.getThreadCount());
-        queue.start();
+//        loadRequest = new ImageLoadRequestQueue(mConfig.getThreadCount());
+//        loadRequest.start();
+        loadRequest=new ImageLoadRequestPool();
     }
 
     private void checkConfig(ImageLoaderConfig config) {
@@ -79,20 +61,20 @@ public class ImageLoader {
 
     public void displayImage(final ImageView view, final String url, LoadListener loadListener) {
         BitmapRequest bitmapRequest = new BitmapRequest(view, url, mConfig.getDisplayConfig(), loadListener == null ? null : loadListener);
-        queue.addRequest(bitmapRequest);
+        loadRequest.addRequest(bitmapRequest);
     }
 
 
     public void stop() {
-        if (queue != null) {
-            queue.stopDispath();
+        if (loadRequest != null) {
+            loadRequest.stopDispath();
         }
     }
 
     public void destory() {
-        if (queue != null) {
-            queue.clear();
-            queue = null;
+        if (loadRequest != null) {
+            loadRequest.clear();
+            loadRequest = null;
         }
     }
 }

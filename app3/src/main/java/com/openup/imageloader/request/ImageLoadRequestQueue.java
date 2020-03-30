@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @CreateDate: 2020/3/27 15:35
  */
 
-public class ImageLoadRequestQueue {
+public class ImageLoadRequestQueue implements ILoadRequest {
 
     private BlockingQueue<BitmapRequest> mRequestQueue = new PriorityBlockingQueue<BitmapRequest>(20);
 
