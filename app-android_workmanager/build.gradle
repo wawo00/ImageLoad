@@ -1,13 +1,14 @@
 apply plugin: 'com.android.application'
+
 android {
-    compileSdkVersion 28
-    buildToolsVersion "28.0.2"
+    compileSdkVersion 29
+    buildToolsVersion "29.0.2"
 
 
     defaultConfig {
-        applicationId "com.openup.app3"
+        applicationId "com.roy.app.android.workmanager"
         minSdkVersion 19
-        targetSdkVersion 28
+        targetSdkVersion 29
         versionCode 1
         versionName "1.0"
 
@@ -20,11 +21,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    // 支持lambda
-    compileOptions {
-        sourceCompatibility = 1.8
-        targetCompatibility = 1.8
-    }
 
 }
 
@@ -34,10 +30,6 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
-
-    implementation 'com.yumimobi.ads.thirdparty:chartboost:7.3.1.1'
-//    implementation project(':testlib')
-    implementation 'com.openup.testlib:testlib:1.0.0'
 }

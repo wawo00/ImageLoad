@@ -58,23 +58,13 @@ public class ImageLoaderDemo extends AppCompatActivity implements LoadListener {
 //        showPic3=findViewById(R.id.showPic3);
 //        showPic=findViewById(R.id.showPic);
         // 获得extendsd卡读取权限
-        getAccess();
         mListView=findViewById(R.id.listview);
         useImageLoader();
         mAdapter=new MyAdapter(this, Arrays.asList(imgUrl));
         mListView.setAdapter(mAdapter);
     }
 
-    private void getAccess() {
-        if (ContextCompat.checkSelfPermission(this, WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
-                || ContextCompat.checkSelfPermission(this, REQUEST_INSTALL_PACKAGES) != PackageManager.PERMISSION_GRANTED
-                || ContextCompat.checkSelfPermission(this, READ_CONTACTS) != PackageManager.PERMISSION_GRANTED
-                || ContextCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                || ContextCompat.checkSelfPermission(this, READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{WRITE_EXTERNAL_STORAGE, READ_PHONE_STATE, READ_CONTACTS, ACCESS_FINE_LOCATION, REQUEST_INSTALL_PACKAGES}, 001);
-        }
 
-    }
 
     private void useImageLoader() {
         ImageLoaderConfig config=new ImageLoaderConfig()
@@ -103,10 +93,6 @@ public class ImageLoaderDemo extends AppCompatActivity implements LoadListener {
 //        ImageLoader.getInstance().stop();
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
 
     @Override
     public void onComplete(String url, Bitmap bitmap) {
