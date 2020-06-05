@@ -1,6 +1,10 @@
 package com.openup.testlib;
 
+import android.content.Context;
 import android.util.Log;
+
+import com.ms.sdk.MsSDK;
+import com.ms.sdk.listener.MsSdkInitializationListener;
 
 /**
  * @ProjectName: TestApplication
@@ -12,9 +16,14 @@ import android.util.Log;
  */
 
 public class TestLocalMaven {
-      public static void printLocalMaven(String content){
+      public static void printLocalMaven(String content, Context context){
           Log.e("roy", "printLocalMaven: "+content );
+          MsSDK.init(context, new MsSdkInitializationListener() {
+              @Override
+              public void onInitializationFinished() {
 
+              }
+          });
 
       }
 

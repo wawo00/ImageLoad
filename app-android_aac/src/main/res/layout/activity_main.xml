@@ -38,5 +38,22 @@
             android:onClick="@{host.onRefresh}"
             android:text="刷新" />
 
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:onClick="onShortCutClick"
+            android:text="快捷方式" />
+
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:onClick="deleteIcon"
+            android:text="删除图标" />
+
     </LinearLayout>
 </layout>

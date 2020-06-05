@@ -24,14 +24,18 @@ android {
     }
 
 }
-
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-
+//    implementation fileTree(dir: 'libs', include: ['*.jar','*.aar'])
     implementation 'androidx.appcompat:appcompat:1.1.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    implementation 'com.ms.sdk:mssdk:1.0.02.3'
 }
 uploadArchives {
     repositories.mavenDeployer {

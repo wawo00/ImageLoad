@@ -1,2 +1,2 @@
-include ':app', ':app2', ':app3', ':testlib', ':helloworld', ':keepalive', ':app-android_workmanager', ':app-android_aac'
+include ':app', ':app2', ':app3', ':testlib', ':helloworld', ':keepalive', ':app-android_workmanager', ':app-android_aac', ':roymediation'
 rootProject.name='TestApplication'

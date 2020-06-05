@@ -9,6 +9,7 @@ buildscript {
         google()
         jcenter()
         mavenLocal()
+        maven { url 'https://dl.bintray.com/ironsource-mobile/android-sdk' }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.5.2'
@@ -27,7 +28,7 @@ allprojects {
         google()
         jcenter()
         mavenLocal()
-
+        maven { url 'https://dl.bintray.com/ironsource-mobile/android-sdk' }
     }
 }
 
