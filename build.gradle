@@ -10,6 +10,13 @@ buildscript {
         jcenter()
         mavenLocal()
         maven { url 'https://dl.bintray.com/ironsource-mobile/android-sdk' }
+        maven { url "https://s3.amazonaws.com/moat-sdk-builds" }
+
+        maven { url 'https://adcolony.bintray.com/AdColony' }
+        maven { url 'https://tapjoy.bintray.com/maven' }
+        maven { url 'https://jitpack.io' }
+        maven { url 'https://dl.bintray.com/ironsource-mobile/android-sdk'}
+        maven { url 'https://chartboostmobile.bintray.com/Chartboost' }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.5.2'
@@ -29,6 +36,13 @@ allprojects {
         jcenter()
         mavenLocal()
         maven { url 'https://dl.bintray.com/ironsource-mobile/android-sdk' }
+        maven { url "https://s3.amazonaws.com/moat-sdk-builds" }
+
+        maven { url 'https://adcolony.bintray.com/AdColony' }
+        maven { url 'https://tapjoy.bintray.com/maven' }
+        maven { url 'https://jitpack.io' }
+        maven { url 'https://dl.bintray.com/ironsource-mobile/android-sdk'}
+        maven { url 'https://chartboostmobile.bintray.com/Chartboost' }
     }
 }
 

@@ -1,5 +1,7 @@
 package com.avidly.roy.mediation.entity;
 
+import androidx.annotation.Nullable;
+
 /**
  * @ProjectName: TestApplication
  * @Package: com.avidly.roy.mediation.entity
@@ -51,5 +53,31 @@ public class AdEntity {
 
     public void setNetWorkPId(String netWorkPId) {
         this.netWorkPId = netWorkPId;
+    }
+
+    @Override
+    public String toString() {
+        return "AdEntity{" +
+                "netWorkName='" + netWorkName + '\'' +
+                ", netWorkKey='" + netWorkKey + '\'' +
+                ", netWorkPId='" + netWorkPId + '\'' +
+                ", isReady=" + isReady +
+                '}';
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (obj == null) {
+            return false;
+        }
+
+        if (!(obj instanceof AdEntity)) {
+            return false;
+        }
+        AdEntity otherObj = (AdEntity) obj;
+        if (otherObj.getNetWorkKey().equals(netWorkKey) && otherObj.getNetWorkName().equals(netWorkName) && otherObj.getNetWorkPId().equals(netWorkPId)) {
+            return true;
+        }
+        return false;
     }
 }

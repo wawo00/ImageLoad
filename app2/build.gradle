@@ -21,15 +21,156 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+//    implementation project(':libcocos2dx')
 
+//    implementation 'androidx.multidex:multidex:2.0.1'
+//    implementation(name: 'analysissdk-foreign_R4.0.0.1', ext: 'aar')
+//    implementation 'analysissdk-foreign_R4.0.0.1@aar'
+
+//    implementation 'androidx.appcompat:appcompat:1.1.0'
+//    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+//    implementation 'com.android.support:appcompat-v7:28.0.0'
+//    implementation 'com.android.support:multidex:1.0.3'
+//    implementation('com.android.support:multidex:1.0.3', {
+//        exclude group: 'com.android.support', module: 'customtabs'
+//    })
+//    implementation 'com.alibaba:fastjson:1.2.67'
+//    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'com.android.billingclient:billing:1.2.2'
+
+    // 远程推送
+//    implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.1.0'
+//    implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
+
+    // facebook
+//    implementation 'com.facebook.android:facebook-login:5.0.1'
+//    implementation 'com.facebook.android:facebook-share:[5,6)'
+//    implementation 'com.facebook.android:facebook-login:[5,6)'
+//    implementation 'com.facebook.android:facebook-android-sdk:5.0.3'
+//    {
+//        exclude group: 'com.android.support', module: 'customtabs'
+//        exclude group: 'com.android.support', module: 'support-annotations'
+//        exclude group: 'com.android.support', module: 'support-compat'
+//        exclude group: 'com.android.support', module: 'support-v4'
+//        exclude group: 'com.android.support', module: 'support-media-compat'
+//    }
+
+    // 广告联盟 AdMob
+//    implementation 'com.google.android.gms:play-services-ads:17.2.0'
+//    implementation 'com.google.firebase:firebase-ads:18.3.0'
+//    implementation 'androidx.appcompat:appcompat:1.1.0'
+//    implementation 'com.google.android.gms:play-services-ads:18.3.0'
+
+//    implementation 'com.applovin:applovin-sdk:9.5.4'
+//    implementation 'com.google.ads.mediation:applovin:9.2.1.1'
+
+//    implementation 'com.adcolony:sdk:3.3.10'
+//    implementation 'com.android.support:support-annotations:28.0.0'
+//    implementation 'com.google.ads.mediation:adcolony:3.3.9.0'
+
+//    implementation('com.vungle:publisher-sdk-android:6.3.24@aar') {
+//        transitive = true
+//    }
+//    implementation 'com.google.ads.mediation:vungle:6.3.24.1'
+    // 广告联盟 AdMob ---------
+
+//    implementation ('com.appsflyer:af-android-sdk:4.9.0@aar') {
+//        exclude group:'com.android.support', module: 'multidex'
+//    }
+    implementation 'com.appsflyer:af-android-sdk:4.9.0'
+    implementation 'com.android.installreferrer:installreferrer:1.0'
+
+//    implementation 'com.android.support:support-annotations:28.0.0'
+//    implementation 'androidx.annotation:annotation:1.1.0'
+//    implementation ('com.google.firebase:firebase-core:17.2.1') {
+//        exclude group: 'com.google.android.gms',module: 'play-services-base'
+//    }
+    // Add the Firebase SDK for Google Analytics
+//    implementation 'com.google.firebase:firebase-analytics:17.2.1'
+
+    // Add the SDK for Firebase Cloud Messaging
+//    implementation 'com.google.firebase:firebase-messaging:20.0.1'
+
+
+// 狂热MSSDK接入在下面
+//    implementation(name: 'analysissdk-foreign_R4.0.0.1', ext: 'aar') { changing = true }
     implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+
+    //multidex
+    implementation 'androidx.multidex:multidex:2.0.1'
+
+    // 临时去掉广告
+    implementation 'com.ms.sdk:mssdk:1.0.02.3'
+
+    // mobpub
+    implementation('com.mopub:mopub-sdk:+@aar') {
+        transitive = true
+    }
+
+//admob
+//    implementation 'com.google.android.gms:play-services-ads:19.0.1'
+
+// AdColony
+//    implementation 'com.adcolony:sdk:4.1.4'
+//    implementation 'com.mopub.mediation:adcolony:4.1.4.0'
+
+// AppLovin
+//    implementation ('com.applovin:applovin-sdk:9.11.6') {
+//        exclude group: 'com.google.android.gms',module: 'play-services-basement'
+//        exclude group: 'com.google.android.gms',module: 'play-services-ads-identifier'
+//    }
+//    implementation 'com.mopub.mediation:applovin:9.11.6.0'
+
+// Tapjoy
+//    implementation 'com.tapjoy:tapjoy-android-sdk:12.4.2@aar'
+//    implementation 'com.mopub.mediation:tapjoy:12.4.2.0'
+//
+    //Vungle
+//    implementation 'com.vungle:publisher-sdk-android:6.5.3'
+//    implementation 'com.mopub.mediation:vungle:6.5.3.0'
+//
+// ironSource
+//    implementation 'com.ironsource.sdk:mediationsdk:6.15.0.1@jar'
+//    implementation 'com.mopub.mediation:ironsource:6.15.0.1.0'
+
+// Unity Ads
+//    implementation 'com.unity3d.ads:unity-ads:3.4.2'
+//    implementation 'com.mopub.mediation:unityads:3.4.2.0'
+
+// Google (AdMob & Ad Manager)
+//    implementation 'com.google.android.gms:play-services-ads:19.0.1'
+//    implementation 'com.mopub.mediation:admob:19.0.1.0'
+
+// Facebook Audience Network
+//    implementation ('com.facebook.android:audience-network-sdk:5.7.1') {
+//        exclude group: 'com.google.android.gms',module: 'play-services-basement'
+//    }
+//    implementation 'com.mopub.mediation:facebookaudiencenetwork:5.7.1.1'
+
+// Chartboost
+//    implementation 'com.chartboost:chartboost-sdk:8.0.1'
+//    implementation 'com.mopub.mediation:chartboost:8.0.1.0'
+
+// Mintegral
+//    implementation 'com.mintegral.msdk:mtgbanner:13.0.31'
+//    implementation 'com.mintegral.msdk:interstitialvideo:13.0.31'
+//    implementation 'com.mintegral.msdk:videojs:13.0.31'
+//    implementation 'com.mintegral.msdk:nativeex:13.0.31'
+//    implementation 'com.mintegral.msdk:mtgjscommon:13.0.31'
+//    implementation 'com.mintegral.msdk:playercommon:13.0.31'
+//    implementation 'com.mintegral.msdk:reward:13.0.31'
+//    implementation 'com.mintegral.msdk:videocommon:13.0.31'
+//    implementation 'com.mintegral.msdk:common:13.0.31'
+//    implementation 'com.mintegral.msdk:mtgnative:13.0.31'
+//    implementation 'com.mintegral.msdk:mtgbid:13.0.31'
+//    implementation 'com.mopub.mediation:mintegral:13.0.31.0'
 }

@@ -18,12 +18,8 @@ public class ParallelLoadr extends BaseLoader {
     }
 
     @Override
-    public void loadAds(Activity activity) {
+    public void startLoad() {
 
     }
 
-    @Override
-    public void initWillLoads() {
-
-    }
 }

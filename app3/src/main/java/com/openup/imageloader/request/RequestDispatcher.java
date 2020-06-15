@@ -20,7 +20,6 @@ import java.util.concurrent.BlockingQueue;
 public class RequestDispatcher extends Thread {
     private BlockingQueue<BitmapRequest> mQueue;
 
-
     public RequestDispatcher(BlockingQueue<BitmapRequest> requestDeque,String name) {
         super(name);
         mQueue = requestDeque;
@@ -43,8 +42,6 @@ public class RequestDispatcher extends Thread {
             e.printStackTrace();
         }
     }
-
-
 
     private String parseSchema(String uri) {
         if (uri.contains("://")) {

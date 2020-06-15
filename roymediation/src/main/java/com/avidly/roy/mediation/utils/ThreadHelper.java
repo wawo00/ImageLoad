@@ -18,14 +18,24 @@ import java.util.concurrent.Executors;
  */
 
 public class ThreadHelper {
+    private static ThreadHelper sInstance = new ThreadHelper();
     // 包含,广告加载线程，主线程，网络请求线程
     private static ExecutorService mLoadExecutor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+    private static ExecutorService mSequenceLoadExecutor = Executors.newSingleThreadExecutor();
     private static Handler uiHandler;
     private static HandlerThread workThread;
     private static Handler workHandler;
 
     static {
         initMainHandler();
+        initWorkThread();
+    }
+
+    public static ThreadHelper getInstance() {
+        return sInstance;
+    }
+
+    private ThreadHelper() {
     }
 
     private static void initWorkThread() {
@@ -40,25 +50,23 @@ public class ThreadHelper {
         }
     }
 
-    public static void runOnMainThread(Runnable runnable) {
+    public  void runOnMainThread(Runnable runnable) {
         if (isUiThread()) {
+            runnable.run();
             return;
         }
         uiHandler.post(runnable);
     }
 
-    public static void runOnMainThreadDelay(Runnable runnable, int sec) {
-        if (isUiThread()) {
-            return;
-        }
+    public  void runOnMainThreadDelay(Runnable runnable, int sec) {
         uiHandler.postDelayed(runnable, sec * 1000);
     }
 
-    private static boolean isUiThread() {
+    private  boolean isUiThread() {
         return Looper.getMainLooper().getThread() == Thread.currentThread();
     }
 
-    public static void runOnLoadThread(Runnable runnable) {
+    public  void runOnLoadThread(Runnable runnable) {
         mLoadExecutor.execute(runnable);
     }
 
@@ -72,6 +80,13 @@ public class ThreadHelper {
 
     public void removeInWorkThread(Runnable runnable) {
         workHandler.removeCallbacks(runnable);
+    }
+    public void removeOnMainThread(Runnable runnable) {
+        uiHandler.removeCallbacks(runnable);
+    }
+
+    public  void runOnSequenceLoadThread(Runnable runnable) {
+        mSequenceLoadExecutor.execute(runnable);
     }
 }
 

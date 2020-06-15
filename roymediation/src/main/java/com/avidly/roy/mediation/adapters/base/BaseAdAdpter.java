@@ -1,5 +1,7 @@
 package com.avidly.roy.mediation.adapters.base;
 
+import androidx.annotation.Nullable;
+
 import com.avidly.roy.mediation.entity.AdEntity;
 
 import java.util.UUID;
@@ -21,7 +23,7 @@ public abstract class BaseAdAdpter implements IAdAdapter {
         return mAdEntity;
     }
 
-    protected void setAdEntity(AdEntity adEntity) {
+    public void setAdEntity(AdEntity adEntity) {
         mAdEntity = adEntity;
     }
 
@@ -34,5 +36,14 @@ public abstract class BaseAdAdpter implements IAdAdapter {
         return UUID.randomUUID().toString().replaceAll("-", "");
     }
 
-
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (!(obj instanceof BaseAdAdpter)) {
+            return false;
+        }
+        if (((BaseAdAdpter) obj).getAdEntity().equals(mAdEntity)) {
+            return true;
+        }
+        return false;
+    }
 }

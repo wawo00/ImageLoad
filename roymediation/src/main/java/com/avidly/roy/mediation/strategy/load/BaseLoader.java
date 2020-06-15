@@ -5,11 +5,14 @@ import android.app.Activity;
 import com.avidly.roy.mediation.adapters.RewardVideoAdapterFactory;
 import com.avidly.roy.mediation.adapters.base.BaseAdAdpter;
 import com.avidly.roy.mediation.adapters.base.BaseRewardVideoAdapter;
-import com.avidly.roy.mediation.callback.RoyAdDisplayCallBack;
+import com.avidly.roy.mediation.callback.RoyAdOuterLoadCallBack;
 import com.avidly.roy.mediation.constant.RoyNetWorks;
 import com.avidly.roy.mediation.entity.AdEntity;
+import com.avidly.roy.mediation.utils.LogHelper;
+import com.avidly.roy.mediation.utils.ThreadHelper;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -25,23 +28,38 @@ public abstract class BaseLoader {
 
     //默认包含三个队列：准备加载，加载中，加载失败
     private CopyOnWriteArrayList<AdEntity> willLoads = new CopyOnWriteArrayList<AdEntity>();
-    private CopyOnWriteArrayList<AdEntity> loadings = new CopyOnWriteArrayList<AdEntity>();
+    private CopyOnWriteArrayList<BaseAdAdpter> loadings = new CopyOnWriteArrayList<BaseAdAdpter>();
     private CopyOnWriteArrayList<BaseAdAdpter> loadeds = new CopyOnWriteArrayList<BaseAdAdpter>();
+    private CopyOnWriteArrayList<RoyAdOuterLoadCallBack> mCpLoadCallBacks = new CopyOnWriteArrayList<>();
+    private Runnable mLoadFailRunnable;
+
+    protected void notifyCpLoadCallback(boolean loaded) {
+        for (RoyAdOuterLoadCallBack callBack : mCpLoadCallBacks) {
+            if (loaded) {
+                callBack.onAdLoaded();
+                cancelFailLoad2cp();
+            }
+        }
+    }
+
+    public void cancelFailLoad2cp() {
+        if (mLoadFailRunnable != null) {
+            ThreadHelper.getInstance().removeOnMainThread(mLoadFailRunnable);
+        }
+    }
+
+    protected void addCpLoadCallBack(RoyAdOuterLoadCallBack cpLoadCallBack) {
+        mCpLoadCallBacks.add(cpLoadCallBack);
+        sendLoadFailtoCpRunnable("no ads");
+    }
 
     protected CopyOnWriteArrayList<AdEntity> getWillLoads() {
         return willLoads;
     }
 
-    protected void setWillLoads(CopyOnWriteArrayList<AdEntity> willLoads) {
-        this.willLoads = willLoads;
-    }
 
-    protected CopyOnWriteArrayList<AdEntity> getLoadings() {
+    protected List<BaseAdAdpter> getLoadings() {
         return loadings;
-    }
-
-    protected void setLoadings(CopyOnWriteArrayList<AdEntity> loadings) {
-        this.loadings = loadings;
     }
 
     public abstract LoadStrategy getLoadStrategy();
@@ -54,31 +72,35 @@ public abstract class BaseLoader {
         this.loadeds = loadeds;
     }
 
-    public abstract void loadAds(Activity activity);
 
-    public abstract void initWillLoads();
-
-    public void addInWillLoadList(AdEntity... entities) {
+    public void addInWillLoadList(Activity activity, AdEntity... entities) {
         willLoads.addAll(Arrays.asList(entities));
-    }
-
-    public void addInLoadingList(AdEntity... entities) {
-        loadings.addAll(Arrays.asList(entities));
-    }
-
-    public void removeFromLoadingList(AdEntity adEntity) {
-        if (loadings.contains(adEntity)) {
-            loadings.remove(adEntity);
+        for (AdEntity adEntity : entities) {
+            BaseAdAdpter adAdpter = getAdAdapter(adEntity, activity);
+            addInLoadingList(adAdpter);
         }
     }
 
-    public void addLoadedList(BaseAdAdpter baseAdAdpter) {
+    public void addInLoadingList(BaseAdAdpter adAdpter) {
+        loadings.add(adAdpter);
+    }
+
+    public void removeFromLoadingList(BaseAdAdpter baseAdAdpter) {
+        if (loadings.contains(baseAdAdpter)) {
+            loadings.remove(baseAdAdpter);
+        }
+    }
+
+    public void addinLoadedList(BaseAdAdpter baseAdAdpter) {
         loadeds.add(baseAdAdpter);
     }
 
     public void removeFromLoaded(BaseAdAdpter baseAdAdpter) {
         if (loadeds.contains(baseAdAdpter)) {
             loadeds.remove(baseAdAdpter);
+            addInLoadingList(baseAdAdpter);
+        } else {
+            LogHelper.logi("no this adadapter ");
         }
     }
 
@@ -91,8 +113,30 @@ public abstract class BaseLoader {
         } else if (adEntity.getNetWorkName().equals(RoyNetWorks.APPLOVIN.getName())) {
             adAdpter = RewardVideoAdapterFactory.getAdapter(RoyNetWorks.APPLOVIN, activity);
         }
+        adAdpter.setAdEntity(adEntity);
         return adAdpter;
     }
 
+    public abstract void startLoad();
 
+
+    public void sendLoadFailtoCpRunnable(final String errorMsg) {
+        mLoadFailRunnable = new LoadFailRunnable(errorMsg);
+        ThreadHelper.getInstance().runOnMainThreadDelay(mLoadFailRunnable, 60);
+    }
+
+    class LoadFailRunnable implements Runnable {
+        String errorMsg;
+
+        public LoadFailRunnable(String errorMsg) {
+            this.errorMsg = errorMsg;
+        }
+
+        @Override
+        public void run() {
+            for (RoyAdOuterLoadCallBack callBack : mCpLoadCallBacks) {
+                callBack.onAdFailedToLoad(errorMsg);
+            }
+        }
+    }
 }

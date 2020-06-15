@@ -4,11 +4,13 @@ import android.app.Activity;
 
 import androidx.annotation.NonNull;
 
+import com.avidly.roy.mediation.RoyAdsApi;
 import com.avidly.roy.mediation.adapters.base.BaseRewardVideoAdapter;
 import com.avidly.roy.mediation.callback.RoyAdDisplayCallBack;
 import com.avidly.roy.mediation.callback.RoyAdLoadCallBack;
 import com.avidly.roy.mediation.constant.RoyNetWorks;
 import com.avidly.roy.mediation.utils.LogHelper;
+import com.avidly.roy.mediation.utils.ThreadHelper;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.InitializationStatus;
@@ -31,10 +33,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 
 public class AdmobRewardVideoAdapter extends BaseRewardVideoAdapter {
-    private RoyAdDisplayCallBack mDisplayCallBack;
-    private RoyAdLoadCallBack mLoadCallback;
     private Activity mActivity;
-    private AtomicBoolean isInited = new AtomicBoolean(false);
     private RewardedAd mRewardedAd;
 
     private AdmobRewardVideoAdapter(Activity activity) {
@@ -50,19 +49,28 @@ public class AdmobRewardVideoAdapter extends BaseRewardVideoAdapter {
 
     @Override
     public void load(RoyAdLoadCallBack loadCallBack) {
-        mLoadCallback = loadCallBack;
-        if (isInited.get() != true) {
-            MobileAds.initialize(mActivity, new OnInitializationCompleteListener() {
-                @Override
-                public void onInitializationComplete(InitializationStatus initializationStatus) {
-                    isInited.set(true);
-                }
-            });
-        } else {
-            //直接进行load
-            mRewardedAd = new RewardedAd(mActivity, getAdEntity().getNetWorkKey());
-            mRewardedAd.loadAd(new AdRequest.Builder().build(), adLoadCallback);
-        }
+        super.load(loadCallBack);
+        ThreadHelper.getInstance().runOnMainThread(new Runnable() {
+            @Override
+            public void run() {
+                MobileAds.initialize(mActivity, getAdEntity().getNetWorkKey());
+                mRewardedAd = new RewardedAd(mActivity, getAdEntity().getNetWorkKey());
+                mRewardedAd.loadAd(new AdRequest.Builder().build(), adLoadCallback);
+            }
+        });
+
+//        if (isInited.get() != true) {
+//            MobileAds.initialize(mActivity, new OnInitializationCompleteListener() {
+//                @Override
+//                public void onInitializationComplete(InitializationStatus initializationStatus) {
+//                    isInited.set(true);
+//                }
+//            });
+//        } else {
+//            //直接进行load
+//            mRewardedAd = new RewardedAd(mActivity, getAdEntity().getNetWorkKey());
+//            mRewardedAd.loadAd(new AdRequest.Builder().build(), adLoadCallback);
+//        }
     }
 
 
@@ -73,12 +81,17 @@ public class AdmobRewardVideoAdapter extends BaseRewardVideoAdapter {
 
     @Override
     public void show(RoyAdDisplayCallBack displayCallBack) {
-        mDisplayCallBack = displayCallBack;
-        if (mRewardedAd.isLoaded()) {
-            mRewardedAd.show(mActivity, adCallback);
-        } else {
-            LogHelper.logi(getAdEntity().getNetWorkKey() + " is not ready");
-        }
+        super.show(displayCallBack);
+        ThreadHelper.getInstance().runOnMainThread(new Runnable() {
+            @Override
+            public void run() {
+                if (mRewardedAd.isLoaded()) {
+                    mRewardedAd.show(mActivity, adCallback);
+                } else {
+                    LogHelper.logi(getAdEntity().getNetWorkKey() + " is not ready");
+                }
+            }
+        });
     }
 
     @Override
@@ -88,20 +101,22 @@ public class AdmobRewardVideoAdapter extends BaseRewardVideoAdapter {
 
     @Override
     public boolean isReady() {
+
+        LogHelper.logi("is ready in admobRewardVideo"+mRewardedAd.isLoaded());
         return mRewardedAd.isLoaded();
     }
 
     RewardedAdLoadCallback adLoadCallback = new RewardedAdLoadCallback() {
         @Override
         public void onRewardedAdLoaded() {
-            mLoadCallback.onAdLoaded(getAdEntity().getNetWorkKey(), getNetWorksName());
+            getLoadCallBack().onAdLoaded(getAdEntity().getNetWorkKey(), getNetWorksName());
             // Ad successfully loaded.
         }
 
         @Override
         public void onRewardedAdFailedToLoad(int errorCode) {
             // Ad failed to load.
-            mLoadCallback.onAdLoaded(getAdEntity().getNetWorkKey(), getNetWorksName());
+            getLoadCallBack().onAdFailedToLoad(getAdEntity().getNetWorkKey(), getNetWorksName(),errorCode+"");
         }
     };
 
@@ -110,25 +125,26 @@ public class AdmobRewardVideoAdapter extends BaseRewardVideoAdapter {
         @Override
         public void onRewardedAdOpened() {
             // Ad opened.
-            mDisplayCallBack.onAdShow(getAdEntity().getNetWorkKey(), getNetWorksName());
+            getDisplayCallBack().onAdShow(getAdEntity().getNetWorkKey(), getNetWorksName());
         }
 
         @Override
         public void onRewardedAdClosed() {
             // Ad closed.
-            mDisplayCallBack.onAdClose(getAdEntity().getNetWorkKey(), getNetWorksName());
+            getDisplayCallBack().onAdClose(getAdEntity().getNetWorkKey(), getNetWorksName());
+            release();
         }
 
         @Override
         public void onUserEarnedReward(@NonNull RewardItem reward) {
             // User earned reward.
-            mDisplayCallBack.onAdReward(getAdEntity().getNetWorkKey(), getNetWorksName());
+            getDisplayCallBack().onAdReward(getAdEntity().getNetWorkKey(), getNetWorksName());
         }
 
         @Override
         public void onRewardedAdFailedToShow(int errorCode) {
             // Ad failed to display.
-            mDisplayCallBack.onAdShowError(getAdEntity().getNetWorkKey(), getNetWorksName(), errorCode + "");
+            getDisplayCallBack().onAdShowError(getAdEntity().getNetWorkKey(), getNetWorksName(), errorCode + "");
         }
     };
 }

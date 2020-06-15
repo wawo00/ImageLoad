@@ -11,11 +11,13 @@ import com.applovin.sdk.AppLovinAdRewardListener;
 import com.applovin.sdk.AppLovinErrorCodes;
 import com.applovin.sdk.AppLovinSdk;
 import com.applovin.sdk.AppLovinSdkConfiguration;
+import com.applovin.sdk.AppLovinSdkSettings;
 import com.avidly.roy.mediation.adapters.base.BaseRewardVideoAdapter;
 import com.avidly.roy.mediation.callback.RoyAdDisplayCallBack;
 import com.avidly.roy.mediation.callback.RoyAdLoadCallBack;
 import com.avidly.roy.mediation.constant.RoyNetWorks;
 import com.avidly.roy.mediation.utils.LogHelper;
+import com.avidly.roy.mediation.utils.ThreadHelper;
 
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -31,9 +33,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ApplovinRewardVideoAdapter extends BaseRewardVideoAdapter {
     private Activity mActivity;
-    private AtomicBoolean isInited = new AtomicBoolean(false);
     private AppLovinIncentivizedInterstitial interAds;
-    private RoyAdDisplayCallBack mCallBack;
 
     public ApplovinRewardVideoAdapter(Activity activity) {
         mActivity = activity;
@@ -46,31 +46,21 @@ public class ApplovinRewardVideoAdapter extends BaseRewardVideoAdapter {
 
     @Override
     public void load(RoyAdLoadCallBack loadCallBack) {
-        setLoadCallBack(loadCallBack);
-        if (isInited.get() != true) {
-            AppLovinSdk.getInstance(mActivity).initializeSdk(mActivity, new AppLovinSdk.SdkInitializationListener() {
-                @Override
-                public void onSdkInitialized(AppLovinSdkConfiguration config) {
-                    isInited.set(true);
-                }
-            });
-        } else {
-            interAds = AppLovinIncentivizedInterstitial.create(mActivity);
+        super.load(loadCallBack);
+        AppLovinSdk.getInstance(getAdEntity().getNetWorkKey(), new AppLovinSdkSettings(), mActivity);
+        interAds = AppLovinIncentivizedInterstitial.create(mActivity);
+        interAds.preload(new AppLovinAdLoadListener() {
+            @Override
+            public void adReceived(AppLovinAd appLovinAd) {
+                mLoadCallBack.onAdLoaded(getAdEntity().getNetWorkKey(), getNetWorksName());
+            }
 
-            interAds.preload(new AppLovinAdLoadListener() {
-                @Override
-                public void adReceived(AppLovinAd appLovinAd) {
-                    mLoadCallBack.onAdLoaded(getAdEntity().getNetWorkKey(), getNetWorksName());
-                }
-
-                @Override
-                public void failedToReceiveAd(int errorCode) {
-                    mLoadCallBack.onAdFailedToLoad(getAdEntity().getNetWorkKey(), getNetWorksName(), errorCode+"");
-                }
-            });
-        }
+            @Override
+            public void failedToReceiveAd(int errorCode) {
+                mLoadCallBack.onAdFailedToLoad(getAdEntity().getNetWorkKey(), getNetWorksName(), errorCode + "");
+            }
+        });
     }
-
 
 
     @Override
@@ -81,18 +71,25 @@ public class ApplovinRewardVideoAdapter extends BaseRewardVideoAdapter {
 
     @Override
     public void show(RoyAdDisplayCallBack displayCallBack) {
-        setDisplayCallBack(displayCallBack);
-        if (isReady()) {
-            interAds.show(mActivity, adRewardListener, null, adDisplayListener, adClickListener);
-        } else {
-            LogHelper.logi(getNetWorksName() + " key " + getAdEntity().getNetWorkKey() + "is not ready");
-        }
+        super.show(displayCallBack);
+        ThreadHelper.getInstance().runOnMainThread(new Runnable() {
+            @Override
+            public void run() {
+                if (isReady()) {
+                    interAds.show(mActivity, adRewardListener, null, adDisplayListener, adClickListener);
+                } else {
+                    LogHelper.logi(getNetWorksName() + " key " + getAdEntity().getNetWorkKey() + "is not ready");
+                }
+            }
+        });
+
     }
 
     @Override
     public void release() {
         interAds = null;
     }
+
     @Override
     public boolean isReady() {
         return interAds.isAdReadyToDisplay();
@@ -111,7 +108,7 @@ public class ApplovinRewardVideoAdapter extends BaseRewardVideoAdapter {
             // For example, "5" or "5.00" if you've specified an amount in the UI.
             String amountGivenString = (String) map.get("amount");
 
-            mCallBack.onAdReward(getAdEntity().getNetWorkKey(), getNetWorksName());
+            getDisplayCallBack().onAdReward(getAdEntity().getNetWorkKey(), getNetWorksName());
             LogHelper.logi("Rewarded " + amountGivenString + " " + currencyName);
 
             // By default we'll show a alert informing your user of the currency & amount earned.
@@ -123,7 +120,7 @@ public class ApplovinRewardVideoAdapter extends BaseRewardVideoAdapter {
             // Your user has already earned the max amount you allowed for the day at this point, so
             // don't give them any more money. By default we'll show them a alert explaining this,
             // though you can change that from the AppLovin dashboard.
-            mCallBack.onAdNOReward(getAdEntity().getNetWorkKey(), getNetWorksName(), "limited");
+            getDisplayCallBack().onAdNOReward(getAdEntity().getNetWorkKey(), getNetWorksName(), "limited");
             LogHelper.logi("Reward validation request exceeded quota with response: " + map);
         }
 
@@ -132,7 +129,7 @@ public class ApplovinRewardVideoAdapter extends BaseRewardVideoAdapter {
             // Your user couldn't be granted a reward for this view. This could happen if you've blacklisted
             // them, for example. Don't grant them any currency. By default we'll show them an alert explaining this,
             // though you can change that from the AppLovin dashboard.
-            mCallBack.onAdNOReward(getAdEntity().getNetWorkKey(), getNetWorksName(), "blacklisted");
+            getDisplayCallBack().onAdNOReward(getAdEntity().getNetWorkKey(), getNetWorksName(), "blacklisted");
             LogHelper.logi("Reward validation request was rejected with response: " + map);
         }
 
@@ -155,7 +152,7 @@ public class ApplovinRewardVideoAdapter extends BaseRewardVideoAdapter {
                 // Note: This code is only possible when working with rewarded videos.
                 errorStr = "INCENTIVIZED_NO_AD_PRELOADED";
             }
-            mCallBack.onAdNOReward(getAdEntity().getNetWorkKey(), getNetWorksName(), errorStr);
+            getDisplayCallBack().onAdNOReward(getAdEntity().getNetWorkKey(), getNetWorksName(), errorStr);
 //            log("Reward validation request failed with error code: " + responseCode);
         }
 
@@ -163,7 +160,7 @@ public class ApplovinRewardVideoAdapter extends BaseRewardVideoAdapter {
         public void userDeclinedToViewAd(AppLovinAd appLovinAd) {
             // This method will be invoked if the user selected "no" when asked if they want to view an ad.
             // If you've disabled the pre-video prompt in the "Manage Apps" UI on our website, then this method won't be called.
-            mCallBack.onAdShowError(getAdEntity().getNetWorkKey(), getNetWorksName(), "userDeclined");
+            getDisplayCallBack().onAdShowError(getAdEntity().getNetWorkKey(), getNetWorksName(), "userDeclined");
         }
     };
 
@@ -172,12 +169,12 @@ public class ApplovinRewardVideoAdapter extends BaseRewardVideoAdapter {
     AppLovinAdDisplayListener adDisplayListener = new AppLovinAdDisplayListener() {
         @Override
         public void adDisplayed(AppLovinAd appLovinAd) {
-            mCallBack.onAdShow(getAdEntity().getNetWorkKey(), getNetWorksName());
+            getDisplayCallBack().onAdShow(getAdEntity().getNetWorkKey(), getNetWorksName());
         }
 
         @Override
         public void adHidden(AppLovinAd appLovinAd) {
-            mCallBack.onAdClose(getAdEntity().getNetWorkKey(), getNetWorksName());
+            getDisplayCallBack().onAdClose(getAdEntity().getNetWorkKey(), getNetWorksName());
         }
     };
 
@@ -185,7 +182,7 @@ public class ApplovinRewardVideoAdapter extends BaseRewardVideoAdapter {
     AppLovinAdClickListener adClickListener = new AppLovinAdClickListener() {
         @Override
         public void adClicked(AppLovinAd appLovinAd) {
-            mCallBack.onAdClick(getAdEntity().getNetWorkKey(), getNetWorksName());
+            getDisplayCallBack().onAdClick(getAdEntity().getNetWorkKey(), getNetWorksName());
         }
     };
 

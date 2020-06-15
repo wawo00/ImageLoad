@@ -12,6 +12,10 @@ package com.avidly.roy.mediation.entity;
 public class UnityAdEntity extends AdEntity {
     private String placementId;
 
+    public UnityAdEntity(String netWorkName, String netWorkKey, String netWorkPId) {
+        super(netWorkName, netWorkKey, netWorkPId);
+    }
+
     public String getPlacementId() {
         return placementId;
     }

@@ -8,6 +8,7 @@ android {
     defaultConfig {
         applicationId "com.avidly.roy.mediation"
         minSdkVersion 19
+        multiDexEnabled true
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
@@ -51,4 +52,5 @@ dependencies {
 
 // Google (AdMob & Ad Manager)
     implementation 'com.google.android.gms:play-services-ads:19.0.1'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
 }
