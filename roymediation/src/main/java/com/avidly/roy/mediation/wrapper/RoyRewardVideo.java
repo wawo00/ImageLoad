@@ -4,6 +4,7 @@ import com.avidly.roy.mediation.callback.RoyAdDisplayCallBack;
 import com.avidly.roy.mediation.callback.RoyAdLoadCallBack;
 import com.avidly.roy.mediation.callback.RoyAdOuterDisplayCallBack;
 import com.avidly.roy.mediation.callback.RoyAdOuterLoadCallBack;
+import com.avidly.roy.mediation.strategy.ShowManager;
 import com.avidly.roy.mediation.strategy.load.LoadManager;
 import com.avidly.roy.mediation.utils.LogHelper;
 
@@ -18,7 +19,6 @@ import com.avidly.roy.mediation.utils.LogHelper;
 
 public class RoyRewardVideo {
     RoyAdOuterLoadCallBack mCpLoadCallBack;
-    RoyAdOuterDisplayCallBack mCpDisplayCallBack;
 
     public void setLoadCallBack(RoyAdOuterLoadCallBack loadCallBack) {
         mCpLoadCallBack = loadCallBack;
@@ -26,14 +26,14 @@ public class RoyRewardVideo {
     }
 
     public boolean isReady() {
-        return  LoadManager.getInstance().hasReadyAds();
+        return LoadManager.getInstance().hasReadyAds();
     }
 
-    public void show(String placementId,RoyAdOuterDisplayCallBack displayCallBack) {
-        if (!isReady()){
+    public void show(String placementId, RoyAdOuterDisplayCallBack displayCallBack) {
+        if (!isReady()) {
             LogHelper.logw("no ads ");
             return;
         }
-        LoadManager.getInstance().showAd(placementId,displayCallBack);
+        ShowManager.getInstance().showAd(placementId, displayCallBack);
     }
 }

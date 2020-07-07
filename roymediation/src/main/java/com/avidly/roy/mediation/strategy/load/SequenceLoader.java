@@ -24,22 +24,6 @@ public class SequenceLoader extends BaseLoader {
     private BaseAdAdpter mAdAdpter;
     private static int MAX_RetryTimes = 3;
 
-    public void initWillLoads(Activity activity) {
-        //admob
-        AdEntity admobEntity1 = new AdEntity(RoyNetWorks.ADMOB.getName(), ConstantValue.Admob_RW_ID_1, "");
-        AdEntity admobEntity2 = new AdEntity(RoyNetWorks.ADMOB.getName(), ConstantValue.Admob_RW_ID_2, "");
-
-        // unity
-//        AdEntity unityEntity1 = new AdEntity(RoyNetWorks.Unity.getName(), ConstantValue.Unity_RW_GAME_ID, ConstantValue.Unity_RW_PID_1);
-//        AdEntity unityEntity2 = new AdEntity(RoyNetWorks.Unity.getName(), ConstantValue.Unity_RW_GAME_ID, ConstantValue.Unity_RW_PID_2);
-
-        //applovin
-        AdEntity applovinEntity1 = new AdEntity(RoyNetWorks.APPLOVIN.getName(), ConstantValue.Applovin_RW_ID_1, "");
-        AdEntity applovinEntity2 = new AdEntity(RoyNetWorks.APPLOVIN.getName(), ConstantValue.Applovin_RW_ID_2, "");
-
-        addInWillLoadList(activity, admobEntity1, admobEntity2, applovinEntity1, applovinEntity2);
-    }
-
     @Override
     public LoadStrategy getLoadStrategy() {
         return LoadStrategy.Sequence;
@@ -47,7 +31,6 @@ public class SequenceLoader extends BaseLoader {
 
     @Override
     public void startLoad() {
-        initWillLoads(RoyAdsApi.getActivity());
         LogHelper.logi("loading size is " + getLoadings().toString());
         if (getLoadings().isEmpty()) {
             return;
@@ -56,6 +39,11 @@ public class SequenceLoader extends BaseLoader {
             AdAdapterLoadWrapper wrapper = new AdAdapterLoadWrapper(adAdpter);
             loadAds(wrapper, 0);
         }
+    }
+
+    @Override
+    public void startLoad(BaseAdAdpter adAdpter) {
+
     }
 
     /**
@@ -85,7 +73,7 @@ public class SequenceLoader extends BaseLoader {
                 @Override
                 public void onAdLoaded(String pid, String adName) {
                     LogHelper.logi("onAdLoaded pid " + pid + " ad name" + adName);
-                    notifyCpLoadCallback(true);
+                    notifyCpLoadCallback();
                     innerAdapterWrapper.reset();
                     addinLoadedList(innerAdapterWrapper.getAdAdpter());
                     removeFromLoadingList(innerAdapterWrapper.getAdAdpter());

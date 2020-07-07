@@ -15,12 +15,48 @@ public class AdEntity {
     private String netWorkName;
     private String netWorkKey;
     private String netWorkPId; // placementId
-    private boolean isReady;
+    private int maxRetry;
+    private int retryNum;
 
     public AdEntity(String netWorkName, String netWorkKey, String netWorkPId) {
         this.netWorkName = netWorkName;
         this.netWorkKey = netWorkKey;
         this.netWorkPId = netWorkPId;
+    }
+
+    public AdEntity(String netWorkName, String netWorkKey, String netWorkPId, int maxRetry) {
+        this.netWorkName = netWorkName;
+        this.netWorkKey = netWorkKey;
+        this.netWorkPId = netWorkPId;
+        this.maxRetry = maxRetry;
+    }
+
+    public AdEntity(String netWorkName, String netWorkKey, String netWorkPId, int maxRetry, int retryNum) {
+        this.netWorkName = netWorkName;
+        this.netWorkKey = netWorkKey;
+        this.netWorkPId = netWorkPId;
+        this.maxRetry = maxRetry;
+        this.retryNum = retryNum;
+    }
+
+    public int getMaxRetry() {
+        return maxRetry;
+    }
+
+    public void setMaxRetry(int maxRetry) {
+        this.maxRetry = maxRetry;
+    }
+
+    public int getRetryNum() {
+        return retryNum;
+    }
+
+    public void setRetryNum(int retryNum) {
+        this.retryNum = retryNum;
+    }
+
+    public void countRetryNum() {
+        retryNum++;
     }
 
     public String getNetWorkName() {
@@ -39,14 +75,6 @@ public class AdEntity {
         this.netWorkKey = netWorkKey;
     }
 
-    public boolean isReady() {
-        return isReady;
-    }
-
-    public void setReady(boolean ready) {
-        isReady = ready;
-    }
-
     public String getNetWorkPId() {
         return netWorkPId;
     }
@@ -61,7 +89,8 @@ public class AdEntity {
                 "netWorkName='" + netWorkName + '\'' +
                 ", netWorkKey='" + netWorkKey + '\'' +
                 ", netWorkPId='" + netWorkPId + '\'' +
-                ", isReady=" + isReady +
+                ", maxRetry=" + maxRetry +
+                ", retryNum=" + retryNum +
                 '}';
     }
 

@@ -12,6 +12,9 @@
         android:theme="@style/AppTheme">
         <activity android:name="com.avidly.roy.app.TestActivity"></activity>
 
+<!--        <meta-data-->
+<!--            android:name="com.google.android.gms.ads.APPLICATION_ID"-->
+<!--            android:value="ca-app-pub-2904230366769187~3158183015" />-->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-1865559073577505~5373609128" />

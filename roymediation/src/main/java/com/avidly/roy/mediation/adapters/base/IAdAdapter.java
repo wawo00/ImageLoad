@@ -23,5 +23,6 @@ public interface IAdAdapter {
     public void show(RoyAdDisplayCallBack displayCallBack);
 
     public void release();
+    public void resetRetryTimes();
     public boolean isReady();
 }

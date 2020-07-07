@@ -8,6 +8,9 @@ import com.avidly.roy.mediation.callback.RoyAdDisplayCallBack;
 import com.avidly.roy.mediation.callback.RoyAdLoadCallBack;
 import com.avidly.roy.mediation.callback.RoyAdOuterDisplayCallBack;
 import com.avidly.roy.mediation.callback.RoyAdOuterLoadCallBack;
+import com.avidly.roy.mediation.constant.ConstantValue;
+import com.avidly.roy.mediation.constant.RoyNetWorks;
+import com.avidly.roy.mediation.entity.AdEntity;
 import com.avidly.roy.mediation.utils.LogHelper;
 
 import java.lang.ref.WeakReference;
@@ -39,82 +42,31 @@ public class LoadManager {
         mLoader.addCpLoadCallBack(loadCallBack);
     }
 
-    public void showAd(final String placementId, final RoyAdOuterDisplayCallBack displayCallBack) {
-        if (!getLoadeds().isEmpty()) {
-            for (BaseAdAdpter adAdpter : getLoadeds()) {
-                if (adAdpter.isReady()) {
-                    showAdapter = adAdpter;
-                    adAdpter.show(new DisplayCallBack(displayCallBack, placementId));
-                    break;
-                }else{
-                    LogHelper.logw("no ready ads in "+adAdpter.mAdEntity.toString());
-                }
-            }
-        } else {
-            LogHelper.logw("no ready ads in loadmanager");
-        }
-    }
-
-    private class DisplayCallBack implements RoyAdDisplayCallBack {
-        private RoyAdOuterDisplayCallBack displayCallBack;
-        private String placementId;
-
-        private DisplayCallBack(RoyAdOuterDisplayCallBack displayCallBack, String placementId) {
-            this.displayCallBack = displayCallBack;
-            this.placementId = placementId;
-        }
-
-        @Override
-        public void onAdShow(String pid, String adName) {
-            displayCallBack.onAdShow(placementId);
-        }
-
-        @Override
-        public void onAdShowError(String pid, String adName, String msg) {
-            displayCallBack.onAdShowError(placementId, msg);
-        }
-
-        @Override
-        public void onAdClick(String pid, String adName) {
-            displayCallBack.onAdClick(placementId);
-        }
-
-        @Override
-        public void onAdClose(String pid, String adName) {
-            displayCallBack.onAdClose(placementId);
-            mLoader.removeFromLoaded(showAdapter);
-        }
-
-        @Override
-        public void onAdReward(String pid, String adName) {
-            displayCallBack.onAdReward(pid);
-        }
-
-        @Override
-        public void onAdNOReward(String pid, String adName, String error) {
-            displayCallBack.onAdNOReward(pid, error);
-        }
-    }
-
     private static class SingletonHolder {
         private static final LoadManager sInstance = new LoadManager();
     }
 
-    private void getLoader(LoadStrategy loadStrategy) {
+    private BaseLoader getLoader(LoadStrategy loadStrategy) {
         if (loadStrategy == LoadStrategy.Sequence) {
             mLoader = new SequenceLoader();
-        } else {
+        } else if (loadStrategy == LoadStrategy.Paralle) {
             mLoader = new ParallelLoadr();
+        } else {
+            mLoader = new RequestLoader();
         }
+        return mLoader;
     }
 
     public void startLoad() {
-        getLoader(LoadStrategy.Sequence);
+        if (mLoader == null) {
+            mLoader = getLoader(LoadStrategy.Request);
+        }
         mLoader.startLoad();
+
     }
 
     public List<BaseAdAdpter> getLoadeds() {
-        LogHelper.logi("get loadeds is "+mLoader.getLoadeds().toString());
+        LogHelper.logi("get loadeds is " + mLoader.getLoadeds().toString());
         return mLoader.getLoadeds();
     }
 
@@ -123,8 +75,12 @@ public class LoadManager {
         return !mLoader.getLoadeds().isEmpty();
     }
 
-    public void reload(BaseAdAdpter adAdpter){
-
+    public void removeFromLoaded(BaseAdAdpter adAdpter) {
+        if (mLoader.getLoadeds().contains(adAdpter)) {
+            mLoader.getLoadeds().remove(adAdpter);
+        } else {
+            return;
+        }
     }
 
 }

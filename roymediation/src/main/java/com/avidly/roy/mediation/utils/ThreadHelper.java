@@ -23,7 +23,7 @@ public class ThreadHelper {
     private static ExecutorService mLoadExecutor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     private static ExecutorService mSequenceLoadExecutor = Executors.newSingleThreadExecutor();
     private static Handler uiHandler;
-    private static HandlerThread workThread;
+    private static HandlerThread workThread=new HandlerThread("roy");;
     private static Handler workHandler;
 
     static {
@@ -39,9 +39,8 @@ public class ThreadHelper {
     }
 
     private static void initWorkThread() {
-        workThread = new HandlerThread("roy_mediation");
-        workHandler = new Handler(workHandler.getLooper());
         workThread.start();
+        workHandler = new Handler(workThread.getLooper());
     }
 
     private static void initMainHandler() {
@@ -58,7 +57,7 @@ public class ThreadHelper {
         uiHandler.post(runnable);
     }
 
-    public  void runOnMainThreadDelay(Runnable runnable, int sec) {
+    public static void runOnMainThreadDelay(Runnable runnable, int sec) {
         uiHandler.postDelayed(runnable, sec * 1000);
     }
 

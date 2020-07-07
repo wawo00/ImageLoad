@@ -59,7 +59,7 @@ public class MainActivity extends Activity {
 
                 @Override
                 public void onAdClose(String placementId) {
-                    LogHelper.logi("onAdClose " + placementId);
+                    LogHelper.logi("outer onAdClose " + placementId);
                 }
 
                 @Override

@@ -10,5 +10,5 @@ package com.avidly.roy.mediation.strategy.load;
  */
 
 public enum LoadStrategy {
-    Sequence, Paralle;
+    Sequence, Paralle,Request;
 }

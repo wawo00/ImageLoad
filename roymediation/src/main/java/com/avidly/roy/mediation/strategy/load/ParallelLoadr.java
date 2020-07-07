@@ -2,6 +2,8 @@ package com.avidly.roy.mediation.strategy.load;
 
 import android.app.Activity;
 
+import com.avidly.roy.mediation.adapters.base.BaseAdAdpter;
+
 /**
  * @ProjectName: TestApplication
  * @Package: com.avidly.roy.mediation.strategy.load
@@ -19,6 +21,11 @@ public class ParallelLoadr extends BaseLoader {
 
     @Override
     public void startLoad() {
+
+    }
+
+    @Override
+    public void startLoad(BaseAdAdpter adAdpter) {
 
     }
 

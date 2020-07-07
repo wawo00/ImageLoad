@@ -46,4 +46,9 @@ public abstract class BaseAdAdpter implements IAdAdapter {
         }
         return false;
     }
+
+    @Override
+    public void resetRetryTimes() {
+        mAdEntity.setRetryNum(0);
+    }
 }

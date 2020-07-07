@@ -7,6 +7,7 @@ import com.avidly.roy.mediation.adapters.base.BaseRewardVideoAdapter;
 import com.avidly.roy.mediation.callback.RoyAdDisplayCallBack;
 import com.avidly.roy.mediation.callback.RoyAdLoadCallBack;
 import com.avidly.roy.mediation.constant.RoyNetWorks;
+import com.avidly.roy.mediation.utils.LogDevHelper;
 import com.avidly.roy.mediation.utils.LogHelper;
 import com.avidly.roy.mediation.utils.ThreadHelper;
 import com.unity3d.ads.UnityAds;
@@ -44,6 +45,7 @@ public class UnityRewardVideoAdapter extends BaseRewardVideoAdapter {
     public void load(RoyAdLoadCallBack loadCallBack) {
         super.load(loadCallBack);
         UnityAds.initialize(mActivity, getAdEntity().getNetWorkKey(), mAdsListener, true);
+
     }
 
 
@@ -85,28 +87,39 @@ public class UnityRewardVideoAdapter extends BaseRewardVideoAdapter {
 
         @Override
         public void onUnityAdsReady(String placementId) {
-            getLoadCallBack().onAdLoaded(placementId, getNetWorksName());
+            if (placementId.equals(mAdEntity.getNetWorkPId())){
+                getLoadCallBack().onAdLoaded(placementId, getNetWorksName());
+            }
         }
 
         @Override
         public void onUnityAdsError(UnityAds.UnityAdsError unityAdsError, String placementId) {
-            getLoadCallBack().onAdFailedToLoad(placementId, getNetWorksName(), unityAdsError.toString());
-
+            if (placementId.equals(mAdEntity.getNetWorkPId())){
+                getLoadCallBack().onAdFailedToLoad(placementId, getNetWorksName(), unityAdsError.toString());
+            }
         }
 
         @Override
         public void onUnityAdsStart(String placementId) {
-            getDisplayCallBack().onAdShow(placementId, getNetWorksName());
+            if (placementId.equals(mAdEntity.getNetWorkPId())){
+                LogDevHelper.logShowI("adStart"+mAdEntity.toString());
+                getDisplayCallBack().onAdShow(placementId, getNetWorksName());
+            }
         }
 
         @Override
         public void onUnityAdsFinish(String placementId, UnityAds.FinishState finishState) {
-            getDisplayCallBack().onAdClose(placementId, getNetWorksName());
+            if (placementId.equals(mAdEntity.getNetWorkPId())){
+                getDisplayCallBack().onAdClose(placementId, getNetWorksName());
+                getDisplayCallBack().onAdReward(placementId, getNetWorksName());
+            }
         }
 
         @Override
         public void onUnityAdsClick(String placementId) {
-            getDisplayCallBack().onAdClick(placementId, getNetWorksName());
+            if (placementId.equals(mAdEntity.getNetWorkPId())){
+                getDisplayCallBack().onAdClick(placementId, getNetWorksName());
+            }
         }
 
         @Override
@@ -115,4 +128,37 @@ public class UnityRewardVideoAdapter extends BaseRewardVideoAdapter {
                                                     UnityAds.PlacementState placementState1) {
         }
     };
+
+    class InnerShowCallBack implements  RoyAdDisplayCallBack{
+
+        @Override
+        public void onAdShow(String pid, String adName) {
+
+        }
+
+        @Override
+        public void onAdShowError(String pid, String adName, String msg) {
+
+        }
+
+        @Override
+        public void onAdClick(String pid, String adName) {
+
+        }
+
+        @Override
+        public void onAdClose(String pid, String adName) {
+
+        }
+
+        @Override
+        public void onAdReward(String pid, String adName) {
+
+        }
+
+        @Override
+        public void onAdNOReward(String pid, String adName, String error) {
+
+        }
+    }
 }

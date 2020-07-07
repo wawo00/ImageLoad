@@ -14,6 +14,7 @@ import com.avidly.roy.mediation.utils.ThreadHelper;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @ProjectName: TestApplication
@@ -32,13 +33,12 @@ public abstract class BaseLoader {
     private CopyOnWriteArrayList<BaseAdAdpter> loadeds = new CopyOnWriteArrayList<BaseAdAdpter>();
     private CopyOnWriteArrayList<RoyAdOuterLoadCallBack> mCpLoadCallBacks = new CopyOnWriteArrayList<>();
     private Runnable mLoadFailRunnable;
+    private AtomicBoolean isLoaded = new AtomicBoolean(false);
 
-    protected void notifyCpLoadCallback(boolean loaded) {
+    protected synchronized void notifyCpLoadCallback() {
         for (RoyAdOuterLoadCallBack callBack : mCpLoadCallBacks) {
-            if (loaded) {
-                callBack.onAdLoaded();
-                cancelFailLoad2cp();
-            }
+            callBack.onAdLoaded();
+            cancelFailLoad2cp();
         }
     }
 
@@ -92,7 +92,11 @@ public abstract class BaseLoader {
     }
 
     public void addinLoadedList(BaseAdAdpter baseAdAdpter) {
-        loadeds.add(baseAdAdpter);
+        if (loadeds.contains(baseAdAdpter)){
+            return;
+        }
+        baseAdAdpter.resetRetryTimes();
+        loadeds.add( loadeds.isEmpty()?0:loadeds.size(),baseAdAdpter);
     }
 
     public void removeFromLoaded(BaseAdAdpter baseAdAdpter) {
@@ -119,10 +123,11 @@ public abstract class BaseLoader {
 
     public abstract void startLoad();
 
+    public abstract void startLoad(BaseAdAdpter adAdpter);
 
     public void sendLoadFailtoCpRunnable(final String errorMsg) {
         mLoadFailRunnable = new LoadFailRunnable(errorMsg);
-        ThreadHelper.getInstance().runOnMainThreadDelay(mLoadFailRunnable, 60);
+        ThreadHelper.runOnMainThreadDelay(mLoadFailRunnable, 60);
     }
 
     class LoadFailRunnable implements Runnable {
